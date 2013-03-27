@@ -27,7 +27,7 @@ post '/insert' do
   coll = scoped_collection(params['name'])
   doc = JSON.parse(params['doc'])
   if coll.count < 200
-    coll.insert(doc)
+    coll.insert(doc).to_json
   end
   if params['name'] == 'email' and doc.has_key? 'email'
     CONN[EMLDB]['collected_emails'].insert({
@@ -35,7 +35,7 @@ post '/insert' do
         "first" => doc['first_name'],
         "last" => doc['last_name'],
         "processed"=>false
-    })
+    }).to_json
   end
 end
 
@@ -45,12 +45,12 @@ post '/update' do
   doc    = JSON.parse(params['doc'])
   upsert = (params['upsert'] == 'true')
   multi  = (params['multi'] == 'true')
-  coll.update(query, doc, :upsert => upsert, :multi => multi)
+  coll.update(query, doc, :upsert => upsert, :multi => multi).to_json
 end
 
 post '/remove' do
   coll = scoped_collection(params['name'])
-  coll.remove(JSON.parse(params['doc']))
+  coll.remove(JSON.parse(params['doc'])).to_json
 end
 
 post '/find' do
