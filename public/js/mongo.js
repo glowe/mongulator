@@ -451,10 +451,10 @@ MongoHandler.prototype = {
               data: {},
               complete: function() { },
               success: function(results) {
-		  results.forEach(function(col) {
-		      collections.push(col);
-		  });
-	      }});
+                  results.forEach(function(col) {
+                      collections.push(col);
+                  });
+              }});
       return collections.join("<br/>");
   },
 
