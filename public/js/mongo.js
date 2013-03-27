@@ -36,12 +36,12 @@ ReadLine.prototype = {
     ctx.activeLine.bind("keydown", function(ev) {
       switch (ev.keyCode) {
         case EnterKeyCode:
-          ctx.processInput(this.value); 
+          ctx.processInput(this.value);
           break;
-        case UpArrowKeyCode: 
+        case UpArrowKeyCode:
           ctx.getCommand('previous');
           break;
-        case DownArrowKeyCode: 
+        case DownArrowKeyCode:
           ctx.getCommand('next');
           break;
       }
@@ -61,7 +61,7 @@ ReadLine.prototype = {
     //this.activeLine[0].value = this.activeLine[0].value;
   },
 
-  // Moves the history pointer to the 'next' or 'previous' position. 
+  // Moves the history pointer to the 'next' or 'previous' position.
   adjustHistoryPointer: function(direction) {
     if(direction == 'previous') {
       if(this.historyPtr - 1 >= 0) {
@@ -154,7 +154,7 @@ MongoHandler.prototype = {
       // Allows for dynamic creation of db collections.
       // We catch the exception, create the collection, then try the command again.
       matches = this._currentCommand.match(/db\.(\w+)/);
-      if(matches && matches.length == 2 && 
+      if(matches && matches.length == 2 &&
           errorCheck !== true && !this.collections.include(matches[1])) {
         this._currentCommand = "";
         this._createCollection(matches[1]);
@@ -272,10 +272,10 @@ MongoHandler.prototype = {
     this.collections.push(name);
     this.db[name] = new DBCollection(this._connection, this._dbPtr, 'short', name);
   },
- 
+
   // help command
   _help: function() {
-      return PTAG('HELP') + 
+      return PTAG('HELP') +
              PTAG('Note: Only a subset of MongoDB\'s features are provided here.') +
              PTAG('For everything else, download and install at mongodb.org.') +
              PTAG('db.foo.help()                 help on collection methods') +
@@ -446,16 +446,16 @@ MongoHandler.prototype = {
   },
 
   _showCollections: function() {
-    var cursor  = new DBCursor('system.namespaces', {}, {});
-    var results = cursor.iterate(); 
-    var collections = [];
-    results.forEach(function(col) {
-      if(!col.name.match(/\$/)) {
-        name = col.name.match(/(\w+\.)(.*)/)[2];
-        collections.push(name);
-      }
-    });
-    return $htmlFormat(collections);
+      var collections = [];
+      $.ajax({url: AppBaseURL + 'collections', type: 'POST', async: false, dataType: "json",
+              data: {},
+              complete: function() { },
+              success: function(results) {
+		  results.forEach(function(col) {
+		      collections.push(col);
+		  });
+	      }});
+      return collections.join("<br/>");
   },
 
   _getCommand: function(tokens) {

@@ -63,3 +63,11 @@ post '/find' do
   cursor = coll.find(query, :fields => fields, :limit => limit, :skip => skip)
   cursor.to_a.to_json
 end
+
+post '/collections' do
+  query = {'name' => {'$regex' => DB + '\.' + user_scope + '\.'}}
+  fields = ['name']
+  cursor = CONN[DB]['system.namespaces'].find(query, :fields => fields)
+  without_system_collections = cursor.select{|coll| not coll['name'].end_with? '$_id_'}
+  without_system_collections.map{|h| h['name'].sub(DB + '.' + user_scope + '.', '')}.to_a.to_json
+end
